@@ -5,6 +5,7 @@ import GUI from "lil-gui"
 
 import vertexShader from "./shaders/vertex.glsl"
 import fragmentShader from "./shaders/fragment.glsl"
+import Plane from "./plane"
 
 export default class Canvas {
   element: HTMLCanvasElement
@@ -19,6 +20,7 @@ export default class Canvas {
   mouse: THREE.Vector2
   orbitControls: OrbitControls
   debug: GUI
+  plane: Plane
 
   constructor() {
     this.element = document.getElementById("webgl") as HTMLCanvasElement
@@ -29,10 +31,12 @@ export default class Canvas {
     this.createRenderer()
     this.setSizes()
     this.createRayCaster()
-    this.createOrbitControls()
+    //this.createOrbitControls()
     this.addEventListeners()
     this.createDebug()
-    this.createDebugMesh()
+
+    this.plane = new Plane({ scene: this.scene, sizes: this.sizes })
+
     this.render()
   }
 
@@ -131,19 +135,10 @@ export default class Canvas {
     this.renderer.setSize(this.dimensions.width, this.dimensions.height)
   }
 
-  createDebugMesh() {
-    const mesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(5, 5),
-      new THREE.ShaderMaterial({ vertexShader, fragmentShader })
-    )
-
-    this.scene.add(mesh)
-  }
-
   render() {
     this.time = this.clock.getElapsedTime()
 
-    this.orbitControls.update()
+    this.plane.render(this.time)
 
     this.renderer.render(this.scene, this.camera)
   }
