@@ -1,6 +1,9 @@
 varying vec2 vUv;
 uniform vec2 uViewportRes;
 uniform float uTime;
+uniform float uRedFactor;
+uniform float uGreenFactor;
+uniform float uBlueFactor;
 
 // #include "./pnoise.glsl";
 #include "./snoise.glsl";
@@ -31,14 +34,20 @@ void main()
     
     vec2 squareUvs = coverUvs(vec2(1.),uViewportRes,vUv);
 
-    float mainNoise = snoise(vec3(squareUvs, uTime*0.07));
+    float mainNoise = snoise(vec3(squareUvs, uTime*0.1));
 
-    float horizontalWaves = abs(tan(mainNoise*10. + uTime*0.2))*0.4;
 
+    float horizontalWaves = sin(mainNoise*10. + uTime);
+
+    // vec3 finalColor = vec3(
+    //     0.7+horizontalWaves*uRedFactor,
+    //     0.7+horizontalWaves*uGreenFactor,
+    //     0.7+horizontalWaves*uBlueFactor
+    // );
     vec3 finalColor = vec3(
-        0.1+horizontalWaves*0.2,
-        horizontalWaves*0.2,
-        0.2+horizontalWaves*0.4
+        0.5+horizontalWaves*uRedFactor + exp(squareUvs.x),
+        0.7+horizontalWaves*uGreenFactor,
+        0.9+horizontalWaves*uBlueFactor - exp(squareUvs.y)
     );
 
     //gl_FragColor = vec4(vec3(horizontalWaves*0.1,horizontalWaves*0.2,horizontalWaves*0.4), 1.);

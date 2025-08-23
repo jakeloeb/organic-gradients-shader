@@ -35,7 +35,13 @@ export default class Canvas {
     this.addEventListeners()
     this.createDebug()
 
-    this.plane = new Plane({ scene: this.scene, sizes: this.sizes })
+    this.plane = new Plane({
+      scene: this.scene,
+      sizes: this.sizes,
+      gui: this.debug,
+    })
+
+    this.debug.hide()
 
     this.render()
   }
@@ -133,6 +139,8 @@ export default class Canvas {
 
     this.renderer.setPixelRatio(this.dimensions.pixelRatio)
     this.renderer.setSize(this.dimensions.width, this.dimensions.height)
+
+    this.plane?.onResize(this.sizes)
   }
 
   render() {
